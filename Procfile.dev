@@ -1,0 +1,2 @@
+web: env RAILS_LOG_TO_STDOUT=${RAILS_LOG_TO_STDOUT:=true} RUBY_DEBUG_OPEN=true bin/rails server
+css: bin/rails tailwindcss:watch
