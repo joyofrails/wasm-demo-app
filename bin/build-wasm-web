@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -ex
+
+JS=true bin/rbwasm build --ruby-version 3.3 -o .wasm/ruby-web.wasm
+bin/rbwasm pack .wasm/ruby-web.wasm \
+  --dir ./app::/app \
+  --dir ./config::/config \
+  --dir ./db::/db \
+  --dir ./vendor::/vendor \
+  --dir ./public::/public \
+  --dir ./lib::/lib \
+  -o .wasm/rails-web.wasm
