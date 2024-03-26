@@ -12,4 +12,3 @@ class Thread
     f
   end
 end
-

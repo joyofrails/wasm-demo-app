@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -ex
+
+# Build for Node
+bin/rbwasm build --ruby-version 3.3 -o .wasm/ruby.wasm
+bin/rbwasm pack .wasm/ruby.wasm \
+  --dir ./app::/app \
+  --dir ./config::/config \
+  --dir ./db::/db \
+  --dir ./vendor::/vendor \
+  --dir ./public::/public \
+  --dir ./lib::/lib \
+  -o .wasm/rails.wasm

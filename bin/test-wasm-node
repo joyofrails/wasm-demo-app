@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -ex
+
+output=$(wasmtime run .wasm/rails.wasm -e "$(cat ./bin/wasm/test.rb)")
+
+if [[ ${output} != *"Hello, WASM"* ]];then
+  echo "Test failed"
+  echo "Expected: Hello, WASM, Got:"
+  echo $output
+  exit 1
+else
+  echo "Test passed"
+  exit 0
+fi

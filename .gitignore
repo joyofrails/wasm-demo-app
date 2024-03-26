@@ -38,7 +38,10 @@
 !/app/assets/builds/.keep
 
 # wasm
-build/
-rubies/
-*.wasm
-.wasm*/
+/build
+/rubies
+/.wasm/*
+!/.wasm/.keep
+!/.wasm/README.md
+
+/config/credentials/production.key

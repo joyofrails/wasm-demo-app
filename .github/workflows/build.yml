@@ -1,0 +1,132 @@
+name: Build
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  build-wasm-node:
+    needs: [test, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build tools from apt
+        run: sudo apt-get install ruby bison make autoconf git curl build-essential libyaml-dev zlib1g-dev -y
+      - name: Setup `wasmtime`
+        uses: bytecodealliance/actions/wasmtime/setup@v1
+      - name: Workaround for Debian ruby distribution
+        run: |
+          # avoid using system rubygems while installing docs
+          # related issue: https://github.com/rubygems/rubygems/issues/3831
+          sudo rm -rf /usr/lib/ruby/vendor_ruby/rubygems/defaults
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.0
+          bundler-cache: true
+      - name: Cache wasm node build
+        id: cache-wasm-node
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-wasm-node
+        with:
+          path: |
+            build
+            rubies
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - name: Compile assets
+        run: SECRET_KEY_BASE_DUMMY=1 RAILS_ENV=production bin/rails assets:precompile
+      - name: Build rails wasm for node
+        run: bin/build-wasm-node
+      - name: Test rails wasm for node successful with wasmtime
+        run: bin/test-wasm-node
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ruby.wasm
+          path: .wasm/ruby.wasm
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rails.wasm
+          path: .wasm/rails.wasm
+
+  build-wasm-web:
+    needs: [test, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build tools from apt
+        run: sudo apt-get install ruby bison make autoconf git curl build-essential libyaml-dev zlib1g-dev -y
+      - name: Workaround for Debian ruby distribution
+        run: |
+          # avoid using system rubygems while installing docs
+          # related issue: https://github.com/rubygems/rubygems/issues/3831
+          sudo rm -rf /usr/lib/ruby/vendor_ruby/rubygems/defaults
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.0
+          bundler-cache: true
+      - name: Cache wasm web
+        id: cache-wasm-web
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-wasm-web
+        with:
+          path: |
+            build
+            rubies
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - name: Compile assets
+        run: SECRET_KEY_BASE_DUMMY=1 RAILS_ENV=production bin/rails assets:precompile
+      - name: Build rails wasm for web
+        run: bin/build-wasm-web
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ruby-web.wasm
+          path: .wasm/ruby-web.wasm
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rails-web.wasm
+          path: .wasm/rails-web.wasm
+
+  test:
+    runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      # Add or replace dependency steps here
+      - name: Install Ruby and gems
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      # Add or replace database setup steps here
+      - name: Set up database schema
+        run: bin/rails db:schema:load
+      # Add or replace test runners here
+      - name: Run tests
+        run: bin/rake
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install Ruby and gems
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      # Add or replace any other lints here
+      # - name: Security audit dependencies
+      #   run: bin/bundler-audit --update
+      # - name: Security audit application code
+      #   run: bin/brakeman -q -w2
+      - name: Lint Ruby files
+        run: bin/rubocop --parallel
