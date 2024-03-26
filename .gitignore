@@ -36,3 +36,9 @@
 
 /app/assets/builds/*
 !/app/assets/builds/.keep
+
+# wasm
+build/
+rubies/
+*.wasm
+.wasm*/

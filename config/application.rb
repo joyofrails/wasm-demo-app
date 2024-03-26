@@ -5,20 +5,29 @@ require "rails"
 require "active_model/railtie"
 require "active_job/railtie"
 require "active_record/railtie"
-require "active_storage/engine"
+# require "active_storage/engine"
 require "action_controller/railtie"
 require "action_mailer/railtie"
-require "action_mailbox/engine"
-require "action_text/engine"
+# require "action_mailbox/engine"
+# require "action_text/engine"
 require "action_view/railtie"
 require "action_cable/engine"
-# require "rails/test_unit/railtie"
+require "rails/test_unit/railtie"
 
-# Require the gems listed in Gemfile, including any gems
-# you've limited to :test, :development, or :production.
-Bundler.require(*Rails.groups)
+# FIXME: Bundler.require doesn't work in Wasm
+if RUBY_PLATFORM.match?(/wasm/)
+  require "propshaft"
+  require "turbo-rails"
+  require "stimulus-rails"
+  require "importmap-rails"
+  require "tailwindcss-rails"
+else
+  # Require the gems listed in Gemfile, including any gems
+  # you've limited to :test, :development, or :production.
+  Bundler.require(*Rails.groups)
+end
 
-module Example
+module WasmDemo
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.1
@@ -26,7 +35,7 @@ module Example
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
-    config.autoload_lib(ignore: %w(assets tasks))
+    config.autoload_lib(ignore: %w(assets tasks wasmify rails-wasm-shim))
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -38,5 +47,12 @@ module Example
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    # Log to STDOUT
+    if ENV["RAILS_LOG_TO_STDOUT"] == "true"
+      config.logger = ActiveSupport::TaggedLogging.new(ActiveSupport::Logger.new($stdout))
+    end
+
+    config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "debug")
   end
 end
