@@ -1,0 +1,15 @@
+require:
+  - standard
+
+inherit_gem:
+  standard: config/base.yml
+
+AllCops:
+  SuggestExtensions: false
+  Exclude:
+    - 'node_modules/**/*'
+    - 'tmp/**/*'
+    - 'vendor/**/*'
+    - '.git/**/*'
+    - 'build/**/*'
+    - 'rubies/**/*'
