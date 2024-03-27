@@ -13,19 +13,15 @@ module CloudStorage
     def exists?(cloud_path)
       data = bucket.files.head(cloud_path)
       Result.new(data: data)
-    rescue => e
-      Result.new(error: e)
     end
 
     def upload(cloud_path, local_file_path)
       data = bucket.files.create(
-        key: s3_key,
-        body: File.open(local_file, "rb"),
+        key: cloud_path,
+        body: File.open(local_file_path, "rb"),
         public: true
       )
       Result.new(data: data)
-    rescue => e
-      Result.new(error: e)
     end
 
     private
