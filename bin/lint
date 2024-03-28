@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+echo "\nRunning Ruby lint..."
+bin/rubocop -A
+
+echo "Done."
