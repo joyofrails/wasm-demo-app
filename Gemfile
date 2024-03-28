@@ -68,6 +68,8 @@ group :development, :test do
   gem "debug", platforms: %i[mri windows]
 
   gem "standard", require: false # Ruby style guide, linter, and formatter [https://github.com/testdouble/standard]
+
+  gem "rspec-rails"
 end
 
 group :development do
