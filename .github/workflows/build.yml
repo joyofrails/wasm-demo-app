@@ -130,8 +130,10 @@ jobs:
         with:
           bundler-cache: true
       - uses: actions/download-artifact@v4
+      - run: mkdir -p ./public/wasm
       - run: ls -lahR ./public/wasm
       - run: ls -lahR wasm
+      - run: cp wasm/*.wasm ./public/wasm
       - name: Upload wasm to cloud storage
         run: |
           if [[ "${{github.ref}}" == "refs/heads/main" ]]; then
