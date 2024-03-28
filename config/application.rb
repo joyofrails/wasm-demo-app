@@ -46,7 +46,7 @@ module WasmDemo
     # config.eager_load_paths << Rails.root.join("extras")
 
     # Don't generate system test files.
-    config.generators.system_tests = nil
+    # config.generators.system_tests = nil
 
     # Log to STDOUT
     if ENV["RAILS_LOG_TO_STDOUT"] == "true"
