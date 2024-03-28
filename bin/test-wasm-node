@@ -2,7 +2,10 @@
 
 set -ex
 
-output=$(wasmtime run .wasm/rails.wasm -e "$(cat ./bin/wasm/test.rb)")
+RUBY_VERSION="3.3"
+RAILS_VERSION="7.1"
+
+output=$(wasmtime run .wasm/rails-${RAILS_VERSION}-ruby-${RUBY_VERSION}.wasm -e "$(cat ./bin/wasm/test.rb)")
 
 if [[ ${output} != *"Hello, WASM"* ]];then
   echo "Test failed"

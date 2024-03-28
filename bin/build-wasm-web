@@ -2,12 +2,16 @@
 
 set -ex
 
-JS=true bin/rbwasm build --ruby-version 3.3 -o .wasm/ruby-web.wasm
-bin/rbwasm pack .wasm/ruby-web.wasm \
+RUBY_VERSION="3.3"
+RAILS_VERSION="7.1"
+
+JS=true bin/rbwasm build --ruby-version ${RUBY_VERSION} -o .wasm/ruby-${RUBY_VERSION}-web.wasm
+
+bin/rbwasm pack .wasm/ruby-${RUBY_VERSION}-web.wasm \
   --dir ./app::/app \
   --dir ./config::/config \
   --dir ./db::/db \
   --dir ./vendor::/vendor \
   --dir ./public::/public \
   --dir ./lib::/lib \
-  -o .wasm/rails-web.wasm
+  -o .wasm/rails-${RAILS_VERSION}-ruby-${RUBY_VERSION}-web.wasm
