@@ -114,10 +114,11 @@ jobs:
         run: SECRET_KEY_BASE_DUMMY=1 RAILS_ENV=production bin/rails assets:precompile
       - name: Build rails wasm for web
         run: bin/build-wasm-web
+      - run: ls -lahR ./public/wasm
       - uses: actions/upload-artifact@v4
         with:
-          name: .wasm
-          path: .wasm/*.wasm
+          name: wasm
+          path: ./public/wasm/*.wasm
           retention-days: 1
 
   upload-wasm-web:
@@ -129,7 +130,8 @@ jobs:
         with:
           bundler-cache: true
       - uses: actions/download-artifact@v4
-      - run: ls -lahR .wasm
+      - run: ls -lahR ./public/wasm
+      - run: ls -lahR wasm
       - name: Upload wasm to cloud storage
         run: |
           if [[ "${{github.ref}}" == "refs/heads/main" ]]; then

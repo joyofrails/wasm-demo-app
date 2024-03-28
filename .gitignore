@@ -30,6 +30,7 @@
 !/tmp/storage/.keep
 
 /public/assets
+/public/wasm
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
@@ -42,7 +43,6 @@
 /rubies
 /.wasm/*
 !/.wasm/.keep
-!/.wasm/README.md
 
 /config/credentials/production.key
 

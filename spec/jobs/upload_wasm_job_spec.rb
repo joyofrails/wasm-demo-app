@@ -17,8 +17,8 @@ RSpec.describe UploadWasmJob, type: :job do
 
     expect(cloud_api).to have_received(:exists?).with(%r{^wasm-demo-app/test/[^/]*/ruby-\d\.\d-web.wasm$}).once
     expect(cloud_api).to have_received(:exists?).with(%r{^wasm-demo-app/test/[^/]*/rails-\d\.\d-ruby-\d\.\d-web.wasm$}).once
-    expect(cloud_api).to have_received(:upload).with(%r{^wasm-demo-app/test/[^/]*/ruby-\d\.\d-web.wasm$}, %r{^\.wasm/ruby-\d\.\d-web.wasm$}).once
-    expect(cloud_api).to have_received(:upload).with(%r{^wasm-demo-app/test/[^/]*/rails-\d\.\d-ruby-\d\.\d-web.wasm$}, %r{^\.wasm/rails-\d\.\d-ruby-\d\.\d-web.wasm$}).once
+    expect(cloud_api).to have_received(:upload).with(%r{^wasm-demo-app/test/[^/]*/ruby-\d\.\d-web.wasm$}, %r{.*/public/wasm/ruby-\d\.\d-web.wasm$}).once
+    expect(cloud_api).to have_received(:upload).with(%r{^wasm-demo-app/test/[^/]*/rails-\d\.\d-ruby-\d\.\d-web.wasm$}, %r{.*/public/wasm/rails-\d\.\d-ruby-\d\.\d-web.wasm$}).once
   end
 
   it "skips the wasm file upload" do

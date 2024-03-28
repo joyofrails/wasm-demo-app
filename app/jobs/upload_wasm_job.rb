@@ -20,7 +20,7 @@ class UploadWasmJob < ApplicationJob
       if exists_result.data.present?
         puts "[#{self.class}] File upload already exists: #{s3_key}"
       else
-        local_file = ".wasm/#{file}"
+        local_file = Rails.root.join("public", "wasm", file).to_s
         raise "File not found: #{local_file}" if !File.exist?(local_file)
 
         puts "[#{self.class}] File uploading #{s3_key.inspect} #{local_file.inspect}"
