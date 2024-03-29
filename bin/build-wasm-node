@@ -11,7 +11,6 @@ bin/rbwasm pack .wasm/ruby-${RUBY_VERSION}.wasm \
   --dir ./app::/app \
   --dir ./config::/config \
   --dir ./db::/db \
-  --dir ./vendor::/vendor \
   --dir ./public::/public \
   --dir ./lib::/lib \
   -o .wasm/rails-${RAILS_VERSION}-ruby-${RUBY_VERSION}.wasm
