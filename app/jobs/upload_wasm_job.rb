@@ -24,7 +24,14 @@ class UploadWasmJob < ApplicationJob
         raise "File not found: #{local_file}" if !File.exist?(local_file)
 
         puts "[#{self.class}] File uploading #{s3_key.inspect} #{local_file.inspect}"
-        result = cloud_api.upload(s3_key, local_file)
+        result = cloud_api.upload(
+          :key => s3_key,
+          :body => File.open(local_file, "rb"),
+          :public => true,
+          "Cache-Control" => "max-age=31536000",
+          "Content-Type" => "application/wasm"
+        )
+
         puts "[#{self.class}] File upload result #{local_file.inspect}\n#{result.inspect}"
       end
     end
