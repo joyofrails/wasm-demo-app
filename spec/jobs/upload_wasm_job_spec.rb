@@ -10,6 +10,8 @@ RSpec.describe UploadWasmJob, type: :job do
     allow(File).to receive(:exist?).and_return(true)
     allow(cloud_api).to receive(:exists?).and_return(double(data: nil)).twice
     allow(cloud_api).to receive(:upload).and_return(double(data: "data")).twice
+
+    allow(File).to receive(:open).and_return(StringIO.new("data"))
   end
 
   it "uploads the wasm files" do
@@ -17,8 +19,8 @@ RSpec.describe UploadWasmJob, type: :job do
 
     expect(cloud_api).to have_received(:exists?).with(%r{^wasm-demo-app/test/[^/]*/ruby-\d\.\d-web.wasm$}).once
     expect(cloud_api).to have_received(:exists?).with(%r{^wasm-demo-app/test/[^/]*/rails-\d\.\d-ruby-\d\.\d-web.wasm$}).once
-    expect(cloud_api).to have_received(:upload).with(%r{^wasm-demo-app/test/[^/]*/ruby-\d\.\d-web.wasm$}, %r{^\.wasm/ruby-\d\.\d-web.wasm$}).once
-    expect(cloud_api).to have_received(:upload).with(%r{^wasm-demo-app/test/[^/]*/rails-\d\.\d-ruby-\d\.\d-web.wasm$}, %r{^\.wasm/rails-\d\.\d-ruby-\d\.\d-web.wasm$}).once
+    expect(cloud_api).to have_received(:upload).with(:key => %r{^wasm-demo-app/test/[^/]*/ruby-\d\.\d-web.wasm$}, :body => kind_of(StringIO), :public => true, "Cache-Control" => "max-age=31536000", "Content-Type" => "application/wasm").once
+    expect(cloud_api).to have_received(:upload).with(:key => %r{^wasm-demo-app/test/[^/]*/rails-\d\.\d-ruby-\d\.\d-web.wasm$}, :body => kind_of(StringIO), :public => true, "Cache-Control" => "max-age=31536000", "Content-Type" => "application/wasm").once
   end
 
   it "skips the wasm file upload" do

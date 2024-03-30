@@ -15,16 +15,10 @@ module CloudStorage
       Result.new(data: data)
     end
 
-    def upload(cloud_path, local_file_path)
-      data = bucket.files.create(
-        key: cloud_path,
-        body: File.open(local_file_path, "rb"),
-        public: true
-      )
+    def upload(options = {})
+      data = bucket.files.create(options)
       Result.new(data: data)
     end
-
-    private
 
     def bucket
       @bucket ||= s3.directories.get(@bucket_name)
@@ -40,5 +34,7 @@ module CloudStorage
         )
       end
     end
+
+    private
   end
 end
