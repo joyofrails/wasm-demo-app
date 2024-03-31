@@ -20,7 +20,7 @@ class UploadWasmJob < ApplicationJob
       if exists_result.data.present?
         puts "[#{self.class}] File upload already exists: #{s3_key}"
       else
-        local_file = ".wasm/#{file}"
+        local_file = ".wasm/#{file}.br"
         raise "File not found: #{local_file}" if !File.exist?(local_file)
 
         puts "[#{self.class}] File uploading #{s3_key.inspect} #{local_file.inspect}"
@@ -29,7 +29,8 @@ class UploadWasmJob < ApplicationJob
           :body => File.open(local_file, "rb"),
           :public => true,
           "Cache-Control" => "max-age=31536000",
-          "Content-Type" => "application/wasm"
+          "Content-Type" => "application/wasm",
+          "Content-Encoding" => "br"
         )
 
         puts "[#{self.class}] File upload result #{local_file.inspect}\n#{result.inspect}"

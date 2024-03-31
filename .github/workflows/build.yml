@@ -125,11 +125,14 @@ jobs:
     needs: [test, lint, build-wasm-node, build-wasm-web]
     runs-on: ubuntu-latest
     steps:
+      - run: sudo apt-get install brotli -y
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
       - uses: actions/download-artifact@v4
+      - name: Brotli compress the wasm files
+        run: brotli -q 8 .wasm/*.wasm
       - run: ls -lahR .wasm
       - name: Upload wasm to cloud storage
         run: |
