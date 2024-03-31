@@ -131,11 +131,12 @@ jobs:
         with:
           bundler-cache: true
       - uses: actions/download-artifact@v4
-      - name: Optimize Wasm
-        uses: NiklasEi/wasm-opt-action@v2
-        with:
-          file: .wasm/*.wasm
-          optimize_all: true
+      # Consider for future optimization
+      # - name: Optimize Wasm
+      #   uses: NiklasEi/wasm-opt-action@v2
+      #   with:
+      #     file: .wasm/*.wasm
+      #     optimize_all: true
       - name: Brotli compress the wasm files
         run: brotli -q 8 .wasm/*.wasm
       - run: ls -lahR .wasm
